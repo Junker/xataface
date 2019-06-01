@@ -692,7 +692,7 @@ END;
 			@xf_db_query('START TRANSACTION', $this->_db);
 		
 		}
-		
+
 		if (@$this->_conf['_database']['sql_mode']) {
 			xf_db_query('SET sql_mode="'.addslashes($this->_conf['_database']['sql_mode']).'"', $this->_db);
 		} else {
@@ -1019,7 +1019,7 @@ END;
 		
 		
 		if ( isset( $query['--msg'] ) ) {
-			$query['--msg'] = preg_replace('#<[^>]*>#','', $query['--msg']);
+			$query['--msg'] = htmlspecialchars($query['--msg']);
 			if ( preg_match('/^@@$/', $query['--msg']) ){
 				
 				if ( @$_SESSION['--msg'] ){
@@ -1036,7 +1036,7 @@ END;
 		
 		
 		if ( isset($query['--error']) and trim($query['--error']) ){
-			$query['--error'] = preg_replace('#<[^>]*>#','', $query['--error']);
+			$query['--error'] = htmlspecialchars($query['--error']);
 			$this->addError(PEAR::raiseError($query['--error']));
 		}
 		
