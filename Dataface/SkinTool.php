@@ -808,18 +808,20 @@ END;
 		
 		// From this point on we can assume we're in the first iteration
 		$stack =& $smarty->get_template_vars('__macro_stack__');
-		$local_vars =& $stack[count($stack)-1];
-		foreach ( array_reverse(array_keys($stack) ) as $macroIndex) {
-			$local_vars =& $stack[$macroIndex];
-			if ( isset( $local_vars['__slots__'][$params['name']]) ){
-				// we found a slot to display here.
-				// tell smarty not to execute the inside of this
-				$repeat=false;	// 
-				echo $local_vars['__slots__'][$params['name']];
-				//display the slot and return
-				return;
-			} 
-			unset($local_vars);
+
+		if (is_array($stack)) {
+			foreach ( array_reverse(array_keys($stack) ) as $macroIndex) {
+				$local_vars =& $stack[$macroIndex];
+				if ( isset( $local_vars['__slots__'][$params['name']]) ){
+					// we found a slot to display here.
+					// tell smarty not to execute the inside of this
+					$repeat=false;	// 
+					echo $local_vars['__slots__'][$params['name']];
+					//display the slot and return
+					return;
+				} 
+				unset($local_vars);
+			}
 		}
 		if ( isset($params['table']) ) $tname = $params['table'];
 		else $tname = $this->ENV['table'];
