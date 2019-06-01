@@ -32,7 +32,7 @@ class Dataface_GlanceList {
 		
 		if ( is_a($origRecord, 'Dataface_RelatedRecord') ){
 			$origDel = $origRecord->_record->table()->getDelegate();
-			$method = 'rel_'.$origRecord->_relationshipName.'__'.oneLineDescription;
+			$method = 'rel_'.$origRecord->_relationshipName.'__oneLineDescription';
 			if ( isset($origDel) and method_exists($origDel, $method) ){
 				return $del->$method($origRecord);
 			}
