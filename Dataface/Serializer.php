@@ -234,7 +234,7 @@ class Dataface_Serializer {
 				case 'sha256':
 					return 'SHA2('.$value.', 256)';
 				case 'sha512':
-					return 'SHA1('.$value.', 512)';
+					return 'SHA2('.$value.', 512)';
 				case 'encrypt':
 					return 'ENCRYPT('.$value.')';
 				case 'aes_encrypt':
