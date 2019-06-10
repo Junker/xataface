@@ -635,9 +635,11 @@ END;
 				$vocab =& $this->_table->getValuelist($field['vocabulary']);
 				
 			} else {
-				$vocab=null;
-				
+				$vocab=null;	
 			}
+
+			if ( @$query[$col] and $query[$col]{0} == '=' ) $queryColVal = substr($query[$col],1);
+			else $queryColVal = @$query[$col];
 			
 			echo '<li> '.df_escape($field['widget']['label']).' <select onchange="resultlist__updateFilters(\''.addslashes($col).'\', this);"><option value="">'.df_translate('scripts.GLOBAL.LABEL_ALL', 'All').'</option>';
 			
@@ -656,9 +658,6 @@ END;
 			{
 				$res = df_query("select `$col`, count(*) as `num` ".$qb->_from()." ".$qb->_secure( $qb->_where(array($col=>null)) )." group by `$col` order by `$col`", null, true);
 				if ( !$res and !is_array($res)) trigger_error(xf_db_error(df_db()), E_USER_ERROR);
-				if ( @$query[$col] and $query[$col]{0} == '=' ) $queryColVal = substr($query[$col],1);
-				
-				else $queryColVal = @$query[$col];
 				
 				//while ( $row = xf_db_fetch_assoc($res) ){
 				foreach ($res as $row){
