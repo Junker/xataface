@@ -669,7 +669,7 @@ class Dataface_Record {
 	 * @since 0.5
 	 * @private
 	 */
-	function _loadRelatedRecordBlock($relname, $block, $where=0, $sort=0){
+	function _loadRelatedRecordBlock($relname, $block, $where=0, $sort=0, $preview=1){
 		if ( $this->_relatedRecordBlockLoaded($relname, $block, $where, $sort) ) return true;
 
 		$relationship =& $this->_table->getRelationship($relname);
@@ -692,7 +692,7 @@ class Dataface_Record {
 		}
 		
 		//$sql = $this->parseString($relationship->_schema['sql']);
-		$sql = $this->parseString($relationship->getSQL($this->loadBlobs, $where, $sort));
+		$sql = $this->parseString($relationship->getSQL($this->loadBlobs, $where, $sort, $preview));
 
 		// TODO We need to change this so that it is compatible with relationships that already specify a limit.
 		$sql .= " LIMIT ".addslashes($start).",".addslashes($limit);
@@ -866,7 +866,7 @@ class Dataface_Record {
 	 *
 	 * @since 0.5
 	 */
-	function &getRelatedRecords( $relname, $multipleRows=true , $start = null, $limit=null, $where=0, $sort=0){
+	function &getRelatedRecords( $relname, $multipleRows=true , $start = null, $limit=null, $where=0, $sort=0, $preview=1){
 		if ( !is_bool($multipleRows) and intval($multipleRows) > 0  ){
 			/*
 			 * Give caller the option of omitting the "MultipleRows" option.
@@ -899,7 +899,7 @@ class Dataface_Record {
 			}
 			$where = $multipleRows;
 			$multipleRows = 'all';
-			return $this->getRelatedRecords($relname, $multipleRows, $where, $sort);
+			return $this->getRelatedRecords($relname, $multipleRows, $where, $sort, 0, 0, $preview);
 		}
 			
 		
@@ -933,7 +933,7 @@ class Dataface_Record {
 		}
 		// [0]->startblock as int , [1]->endblock as int
 		for ( $i=$range[0]; $i<=$range[1]; $i++){
-			$res = $this->_loadRelatedRecordBlock($relname, $i, $where, $sort);
+			$res = $this->_loadRelatedRecordBlock($relname, $i, $where, $sort, $preview);
 			
 			// If the above returned false, that means that we have reached the end of the result set.
 			if (!$res ) break;
@@ -1166,7 +1166,7 @@ class Dataface_Record {
 	 *
 	 * @since 0.5
 	 */
-	function getRelationshipIterator($relationshipName, $start=null, $limit=null,$where=0, $sort=0){
+	function getRelationshipIterator($relationshipName, $start=null, $limit=null,$where=0, $sort=0, $preview=1){
 		if ( !$sort ){
 			$relationship =& $this->_table->getRelationship($relationshipName);
 			if ( PEAR::isError($relationship) ){
@@ -1177,7 +1177,7 @@ class Dataface_Record {
 				$sort = $order_column;
 			}
 		}
-		return new Dataface_RelationshipIterator($this, $relationshipName, $start, $limit, $where, $sort);
+		return new Dataface_RelationshipIterator($this, $relationshipName, $start, $limit, $where, $sort, $preview);
 	}
 	
 	/**
@@ -1204,10 +1204,10 @@ class Dataface_Record {
 	 * @see Dataface_RelationshipIterator()
 	 * @see Dataface_Record::getRelatedRecord()
 	 */
-	function &getRelatedRecordObjects($relationshipName, $start=null, $end=null,$where=0, $sort=0){
+	function &getRelatedRecordObjects($relationshipName, $start=null, $end=null,$where=0, $sort=0, $preview=1){
 		$out = array();
 			
-		$it = $this->getRelationshipIterator($relationshipName, $start, $end,$where,$sort);
+		$it = $this->getRelationshipIterator($relationshipName, $start, $end,$where,$sort, $preview);
 		while ($it->hasNext() ){
 			$out[] =& $it->next();
 		}
@@ -1855,7 +1855,7 @@ class Dataface_Record {
 						$out = $this->_transientValues[$fieldname];
 					} else if ( isset($transientFields[$fieldname]['relationship']) and $transientFields[$fieldname]['widget']['type'] == 'grid'){
 						$out= array();
-						$rrecords =& $this->getRelatedRecordObjects($transientFields[$fieldname]['relationship'], 'all');
+						$rrecords =& $this->getRelatedRecordObjects($transientFields[$fieldname]['relationship'], 'all', null, 0, 0, false);
 						$currRelationship =& $this->_table->getRelationship($transientFields[$fieldname]['relationship']);
 						$relKeys =& $currRelationship->keys();
 						//print_r(array_keys($currRelationship->keys()));
@@ -4825,16 +4825,16 @@ class Dataface_RelationshipIterator{
 	var $_keys;
 	var $_where;
 	var $_sort;
-	function Dataface_RelationshipIterator(&$record, $relationshipName, $start=null, $limit=null, $where=0, $sort=0){
+	function Dataface_RelationshipIterator(&$record, $relationshipName, $start=null, $limit=null, $where=0, $sort=0, $preview=1){
 		$this->_record =& $record;
 		$this->_relationshipName = $relationshipName;
 		$this->_where = $where;
 		$this->_sort = $sort;
 		if ( $start !== 'all' ){
 		
-			$this->_records =& $record->getRelatedRecords($relationshipName, true, $start, $limit, $where, $sort);
-		} else {
-			$this->_records =& $record->getRelatedRecords($relationshipName, 'all',$where, $sort);
+			$this->_records =& $record->getRelatedRecords($relationshipName, true, $start, $limit, $where, $sort, $preview);
+		} else { 
+			$this->_records =& $record->getRelatedRecords($relationshipName, 'all',$where, $sort, 0, 0, $preview);
 		}
 		if ( is_array($this->_records) ){
 			$this->_keys = array_keys($this->_records);

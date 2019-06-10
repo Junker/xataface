@@ -753,7 +753,7 @@ class Dataface_Relationship {
 			 if ( DATAFACE_DEBUG ){
 				$this->app->addDebugInfo("Time to generate sql for relationship {$this->name} : $timeToGenerate");
 			}
-			return $this->getSQL($getBlobs, $where, $sort);
+			return $this->getSQL($getBlobs, $where, $sort, $preview);
 		}
 		
 		
