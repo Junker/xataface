@@ -80,7 +80,7 @@ class simple_html_dom_node {
     function __destruct() {
         $this->clear();
     }
-    
+
     function __toString() {
         return $this->outertext();
     }
@@ -117,7 +117,7 @@ class simple_html_dom_node {
         return null;
     }
 
-    // returns the next sibling of node    
+    // returns the next sibling of node
     function next_sibling() {
         if ($this->parent===null) return null;
         $idx = 0;
@@ -333,14 +333,14 @@ class simple_html_dom_node {
 
     protected function parse_selector($selector_string) {
         // pattern of CSS selectors, modified from mootools
-        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([, ]+)/is";
+        $pattern = "/([\w\-:\*]*)(?:\#([\w\-]+)|\.([\w\-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([, ]+)/is";
         preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER);
         $selectors = array();
         $result = array();
-        
+
         foreach ($matches as $m) {
             if (trim($m[0])==='') continue;
-            
+
             list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
             if(!empty($m[2])) {$key='id'; $val=$m[2];}
             if(!empty($m[3])) {$key='class'; $val=$m[3];}
@@ -381,7 +381,7 @@ class simple_html_dom_node {
                 return $this->_[HDOM_INFO_INNER] = $value;
         }
         if (!isset($this->attr[$name])) {
-            $this->_[HDOM_INFO_SPACE][] = array(' ', '', ''); 
+            $this->_[HDOM_INFO_SPACE][] = array(' ', '', '');
             $this->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
         }
         $this->attr[$name] = $value;
@@ -396,7 +396,7 @@ class simple_html_dom_node {
         //no value attr: nowrap, checked selected...
         return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
     }
-    
+
     function __unset($name) {
         if (isset($this->attr[$name]))
             unset($this->attr[$name]);
@@ -473,7 +473,7 @@ class simple_html_dom {
         $this->remove_noise("'<\s*(?:pre|code)[^>]*>(.*?)<\s*/\s*(?:pre|code)\s*>'is");
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", true);
-        
+
         //echo $this->doc;
         //die;
 
@@ -623,7 +623,7 @@ class simple_html_dom {
         }
 
         // text
-        if (!preg_match("/^[\w-:]+$/", $tag)) {
+        if (!preg_match("/^[\w\-:]+$/", $tag)) {
             $node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
             if ($this->char==='>') $node->_[HDOM_INFO_TEXT].='>';
             $this->link_nodes($node, false);
