@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *-------------------------------------------------------------------------------
  *}
- {if df_count_actions('_tables') > 0}
-    <nav class="tables" role="navigation">
-        {actions_menu category=_tables}
-    </nav>
- {else }
     {if $ENV.prefs.horizontal_tables_menu}
     <nav class="tables" role="navigation">
     <ul id="table_selection_tabs">
@@ -47,6 +42,11 @@
         {block name="tables_menu_tail"}
     </ul>
     </nav>
+    {if df_count_actions('_tables') > 0}
+    <nav class="tables" role="navigation">
+        {actions_menu category=_tables}
+    </nav>
+    {/if}
     {else}
     <div class="portlet" id="portlet-navigation-tree">
         <div>
@@ -80,4 +80,3 @@
     </div>
     </div>
     {/if}
-{/if}
